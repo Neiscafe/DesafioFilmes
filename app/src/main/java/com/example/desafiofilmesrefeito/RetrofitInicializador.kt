@@ -5,10 +5,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class RetrofitInicializador {
+
     val retrofit = Retrofit.Builder()
-        .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://api.themoviedb.org/3/")
+        .addConverterFactory(MoshiConverterFactory.create())
         .build()
 
-    val notaService = retrofit.create(FilmeService::class.java)
+    val filmeService = retrofit.create(FilmeService::class.java)
 }
