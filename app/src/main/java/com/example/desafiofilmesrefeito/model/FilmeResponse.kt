@@ -2,7 +2,6 @@ package com.example.desafiofilmesrefeito.model
 
 import com.example.desafiofilmes.model.Filme
 import com.squareup.moshi.Json
-import retrofit2.http.Field
 
 data class FilmeResponse(
     @field:Json(name = "page") val page: Int,

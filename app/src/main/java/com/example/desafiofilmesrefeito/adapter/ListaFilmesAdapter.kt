@@ -4,8 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
 
@@ -33,9 +36,26 @@ class ListaFilmesAdapter (listaFilmes: List<Filme>,
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun vincula(filme: Filme) {
+            val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
+            Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
+
             val txtVnome = itemView.findViewById<TextView>(R.id.textview_nome)
-            txtVnome.text = filme.nome
+            txtVnome.text = filme.title
+
+            val txtVnota = itemView.findViewById<TextView>(R.id.textview_nota)
+            txtVnota.text = filme.vote_average
+
+
         }
 
     }
+//    class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//
+//
+//        public LoadingViewHolder(View itemView) {
+//            super.itemView;
+//            val progressBar: ProgressBar = itemView.findViewById(R.id.);
+//
+//        }
+//    }
 }
