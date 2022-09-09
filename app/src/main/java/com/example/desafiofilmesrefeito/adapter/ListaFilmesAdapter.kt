@@ -34,6 +34,10 @@ class ListaFilmesAdapter (listaFilmes: List<Filme>,
         return listaFilmes.size
     }
 
+    fun updateData() {
+        notifyDataSetChanged()
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun vincula(filme: Filme) {
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
@@ -49,13 +53,4 @@ class ListaFilmesAdapter (listaFilmes: List<Filme>,
         }
 
     }
-//    class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//
-//
-//        public LoadingViewHolder(View itemView) {
-//            super.itemView;
-//            val progressBar: ProgressBar = itemView.findViewById(R.id.);
-//
-//        }
-//    }
 }
