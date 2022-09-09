@@ -12,15 +12,14 @@ import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
 
-class ListaFilmesAdapter (listaFilmes: List<Filme>,
-                          private val context: Context):
+class ListaFilmesAdapter ():
     RecyclerView.Adapter<ListaFilmesAdapter.ViewHolder>() {
 
-    val listaFilmes = listaFilmes.toMutableList()
+    val listaFilmes = arrayListOf<Filme>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
-            .from(context)
+            .from(parent.context)
             .inflate(R.layout.item_lista, parent, false)
         return ViewHolder(view)
     }
@@ -34,10 +33,6 @@ class ListaFilmesAdapter (listaFilmes: List<Filme>,
         return listaFilmes.size
     }
 
-    fun updateData() {
-        notifyDataSetChanged()
-    }
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun vincula(filme: Filme) {
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
@@ -49,8 +44,17 @@ class ListaFilmesAdapter (listaFilmes: List<Filme>,
             val txtVnota = itemView.findViewById<TextView>(R.id.textview_nota)
             txtVnota.text = filme.vote_average
 
-
         }
+
+    }
+
+    fun populaAdapter(novaLista: List<Filme>){
+
+        val antigaPosicaoDosItens = listaFilmes.size
+        val novaPosicaoDosItens = novaLista.size
+        listaFilmes.addAll(novaLista)
+        notifyItemRangeInserted(antigaPosicaoDosItens, novaPosicaoDosItens)
+
 
     }
 }
