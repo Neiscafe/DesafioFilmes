@@ -1,6 +1,7 @@
 package com.example.desafiofilmes.activity
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.RetrofitInicializador
+import com.example.desafiofilmesrefeito.activity.DescricaoFilme
 import com.example.desafiofilmesrefeito.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -102,8 +104,15 @@ class MainActivity : AppCompatActivity() {
         val adapter = ListaFilmesAdapter()
         val recyclerView = binding.recyclerView
         val layoutManager = LinearLayoutManager(this@MainActivity)
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
+        adapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
+            override fun onItemClick(posicao: Int) {
+                val intent = Intent(this@MainActivity, DescricaoFilme::class.java)
+                startActivity(intent)
+            }
+        })
         adapter.populaAdapter(listaFilmes)
 
     }

@@ -12,8 +12,19 @@ import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
 
-class ListaFilmesAdapter ():
+class ListaFilmesAdapter() :
     RecyclerView.Adapter<ListaFilmesAdapter.ViewHolder>() {
+
+    private lateinit var mListener: onItemClickListener
+
+    interface onItemClickListener {
+        fun onItemClick(posicao: Int)
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener) {
+        mListener = listener
+    }
+
 
     val listaFilmes = arrayListOf<Filme>()
 
@@ -21,7 +32,7 @@ class ListaFilmesAdapter ():
         val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_lista, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view, mListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -33,7 +44,14 @@ class ListaFilmesAdapter ():
         return listaFilmes.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+
+        init {
+            itemView.setOnClickListener {
+                listener.onItemClick(adapterPosition)
+            }
+        }
+
         fun vincula(filme: Filme) {
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
             Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
@@ -43,12 +61,11 @@ class ListaFilmesAdapter ():
 
             val txtVnota = itemView.findViewById<TextView>(R.id.textview_nota)
             txtVnota.text = filme.vote_average
-
         }
 
     }
 
-    fun populaAdapter(novaLista: List<Filme>){
+    fun populaAdapter(novaLista: List<Filme>) {
 
         val antigaPosicaoDosItens = listaFilmes.size
         val novaPosicaoDosItens = novaLista.size
