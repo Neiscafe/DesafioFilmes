@@ -2,6 +2,7 @@ package com.example.desafiofilmes.activity
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.icu.text.CaseMap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
@@ -34,6 +36,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setTitle("GuilhermeFlix")
+
 
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -103,13 +108,17 @@ class MainActivity : AppCompatActivity() {
         }
         val adapter = ListaFilmesAdapter()
         val recyclerView = binding.recyclerView
-        val layoutManager = LinearLayoutManager(this@MainActivity)
+        val layoutManager = GridLayoutManager(this@MainActivity, 2)
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         adapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
+
+                val filmeEnviado = listaFilmes.get(posicao)
                 val intent = Intent(this@MainActivity, DescricaoFilme::class.java)
+                intent.putExtra("filmeEnviado", filmeEnviado)
+
                 startActivity(intent)
             }
         })

@@ -55,12 +55,6 @@ class ListaFilmesAdapter() :
         fun vincula(filme: Filme) {
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
             Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
-
-            val txtVnome = itemView.findViewById<TextView>(R.id.textview_nome)
-            txtVnome.text = filme.title
-
-            val txtVnota = itemView.findViewById<TextView>(R.id.textview_nota)
-            txtVnota.text = filme.vote_average
         }
 
     }
