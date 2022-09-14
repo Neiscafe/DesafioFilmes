@@ -2,10 +2,8 @@ package com.example.desafiofilmes.activity
 
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.icu.text.CaseMap
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,14 +15,14 @@ import com.example.desafiofilmes.adapter.ListaFilmesAdapter
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.RetrofitInicializador
 import com.example.desafiofilmesrefeito.activity.DescricaoFilme
-import com.example.desafiofilmesrefeito.databinding.ActivityMainBinding
+import com.example.desafiofilmesrefeito.databinding.ActivityListaFilmesBinding
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class ListaFilmesActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityListaFilmesBinding
     private val listaFilmes: ArrayList<Filme> = arrayListOf()
     val retrofit by lazy {
         RetrofitInicializador().retrofit
@@ -34,11 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setTitle("GuilhermeFlix")
-
 
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -81,7 +78,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun populaLista() {
-
         try {
             val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina)
             if (response.isSuccessful) {
@@ -108,21 +104,19 @@ class MainActivity : AppCompatActivity() {
         }
         val adapter = ListaFilmesAdapter()
         val recyclerView = binding.recyclerView
-        val layoutManager = GridLayoutManager(this@MainActivity, 2)
+        val layoutManager = GridLayoutManager(this@ListaFilmesActivity, 2)
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         adapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
-
                 val filmeEnviado = listaFilmes.get(posicao)
-                val intent = Intent(this@MainActivity, DescricaoFilme::class.java)
+                val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
                 intent.putExtra("filmeEnviado", filmeEnviado)
 
                 startActivity(intent)
             }
         })
         adapter.populaAdapter(listaFilmes)
-
     }
 }

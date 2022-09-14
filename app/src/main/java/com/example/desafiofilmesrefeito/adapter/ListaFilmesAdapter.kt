@@ -25,7 +25,6 @@ class ListaFilmesAdapter() :
         mListener = listener
     }
 
-
     val listaFilmes = arrayListOf<Filme>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -65,7 +64,5 @@ class ListaFilmesAdapter() :
         val novaPosicaoDosItens = novaLista.size
         listaFilmes.addAll(novaLista)
         notifyItemRangeInserted(antigaPosicaoDosItens, novaPosicaoDosItens)
-
-
     }
 }

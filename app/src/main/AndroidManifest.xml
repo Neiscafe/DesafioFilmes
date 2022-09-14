@@ -19,7 +19,7 @@
             android:name=".activity.DescricaoFilme"
             android:exported="false" />
         <activity
-            android:name="com.example.desafiofilmes.activity.MainActivity"
+            android:name="com.example.desafiofilmes.activity.ListaFilmesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
