@@ -17,6 +17,7 @@
         tools:targetApi="31">
         <activity
             android:name=".activity.DescricaoFilme"
+            android:parentActivityName="com.example.desafiofilmes.activity.ListaFilmesActivity"
             android:exported="false" />
         <activity
             android:name="com.example.desafiofilmes.activity.ListaFilmesActivity"

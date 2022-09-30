@@ -1,12 +1,9 @@
 package com.example.desafiofilmes.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
@@ -14,6 +11,7 @@ import com.example.desafiofilmesrefeito.R
 
 class ListaFilmesAdapter() :
     RecyclerView.Adapter<ListaFilmesAdapter.ViewHolder>() {
+
 
     private lateinit var mListener: onItemClickListener
 
@@ -43,7 +41,8 @@ class ListaFilmesAdapter() :
         return listaFilmes.size
     }
 
-    class ViewHolder(itemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, listener: onItemClickListener) :
+        RecyclerView.ViewHolder(itemView) {
 
         init {
             itemView.setOnClickListener {
@@ -59,10 +58,11 @@ class ListaFilmesAdapter() :
     }
 
     fun populaAdapter(novaLista: List<Filme>) {
-
         val antigaPosicaoDosItens = listaFilmes.size
         val novaPosicaoDosItens = novaLista.size
+        listaFilmes.clear()
         listaFilmes.addAll(novaLista)
         notifyItemRangeInserted(antigaPosicaoDosItens, novaPosicaoDosItens)
     }
+
 }

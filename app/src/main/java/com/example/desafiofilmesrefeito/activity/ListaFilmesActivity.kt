@@ -1,9 +1,9 @@
 package com.example.desafiofilmes.activity
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
+
 class ListaFilmesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListaFilmesBinding
@@ -27,6 +28,10 @@ class ListaFilmesActivity : AppCompatActivity() {
     val retrofit by lazy {
         RetrofitInicializador().retrofit
     }
+    val mainAdapter by lazy {
+        ListaFilmesAdapter()
+    }
+
     private var pagina = 1
     private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
 
@@ -39,20 +44,27 @@ class ListaFilmesActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-
+                configuraAdapter()
                 populaLista()
-
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        configuraAdapterListener()
+    }
+
+    private fun configuraAdapterListener() {
+        if (::recyclerViewListener.isInitialized){
+            binding.recyclerView.removeOnScrollListener(recyclerViewListener)
+        }
         recyclerViewListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (dy > 0) {
+                    println("scroll vertical é maior que zero")
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
                     val visibleItemCount = layoutManager.childCount
@@ -60,6 +72,7 @@ class ListaFilmesActivity : AppCompatActivity() {
                     val totalItemCount = layoutManager.itemCount
 
                     if (totalItemVisible >= totalItemCount) {
+                        println("total de itens visíveis é maior ou igual ao número de itens")
                         binding.recyclerView.removeOnScrollListener(recyclerViewListener)
                         lifecycleScope.launch {
                             populaLista()
@@ -68,7 +81,6 @@ class ListaFilmesActivity : AppCompatActivity() {
                 }
             }
         }
-
         binding.recyclerView.addOnScrollListener(recyclerViewListener)
     }
 
@@ -82,33 +94,29 @@ class ListaFilmesActivity : AppCompatActivity() {
             val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina)
             if (response.isSuccessful) {
                 listaFilmes.addAll(response.body()!!.results)
+                mainAdapter.populaAdapter(listaFilmes)
 
-                configuraScrollListener()
-                pagina++
+                configuraAdapterListener()
+                pagina ++
 
             } else {
-                Log.d(TAG, "onCreate: Error")
+                Log.d("deu errado", "onCreate: Error")
             }
         } catch (e: HttpException) {
-            Log.d(TAG, "onCreate: ${e.printStackTrace()}")
+            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
         } catch (e: IOException) {
-            Log.d(TAG, "onCreate: ${e.printStackTrace()}")
+            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
         }
     }
 
+    private fun configuraAdapter() {
 
-    private fun configuraScrollListener() {
-        if (::recyclerViewListener.isInitialized){
-            binding.recyclerView.removeOnScrollListener(recyclerViewListener)
-            binding.recyclerView.addOnScrollListener(recyclerViewListener)
-        }
-        val adapter = ListaFilmesAdapter()
         val recyclerView = binding.recyclerView
         val layoutManager = GridLayoutManager(this@ListaFilmesActivity, 2)
 
-        recyclerView.adapter = adapter
+        recyclerView.adapter = mainAdapter
         recyclerView.layoutManager = layoutManager
-        adapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
+        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
                 val filmeEnviado = listaFilmes.get(posicao)
                 val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
@@ -117,6 +125,5 @@ class ListaFilmesActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
-        adapter.populaAdapter(listaFilmes)
     }
 }
