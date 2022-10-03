@@ -3,8 +3,10 @@ package com.example.desafiofilmes.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -41,6 +43,9 @@ class ListaFilmesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setTitle("GuilhermeFlix")
+
+        val flecha = binding.appbar.imageVFlecha
+        flecha.isVisible = false
 
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
