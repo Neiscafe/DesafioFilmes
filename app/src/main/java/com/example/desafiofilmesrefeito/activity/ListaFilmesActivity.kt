@@ -3,7 +3,9 @@ package com.example.desafiofilmes.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -15,8 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
 import com.example.desafiofilmes.model.Filme
+import com.example.desafiofilmesrefeito.R
 import com.example.desafiofilmesrefeito.RetrofitInicializador
 import com.example.desafiofilmesrefeito.activity.DescricaoFilme
+import com.example.desafiofilmesrefeito.activity.FilmesFavoritosActivity
 import com.example.desafiofilmesrefeito.databinding.ActivityListaFilmesBinding
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -44,8 +48,15 @@ class ListaFilmesActivity : AppCompatActivity() {
 
         setTitle("GuilhermeFlix")
 
-        val flecha = binding.appbar.imageVFlecha
+        val flecha = binding.appbar.ImageVFlecha
         flecha.isVisible = false
+
+        val favoritos = findViewById<TextView>(R.id.TextVFavoritos)
+        favoritos.setOnClickListener {
+            val intent = Intent(this, FilmesFavoritosActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -126,7 +137,6 @@ class ListaFilmesActivity : AppCompatActivity() {
                 val filmeEnviado = listaFilmes.get(posicao)
                 val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
                 intent.putExtra("filmeEnviado", filmeEnviado)
-
                 startActivity(intent)
             }
         })

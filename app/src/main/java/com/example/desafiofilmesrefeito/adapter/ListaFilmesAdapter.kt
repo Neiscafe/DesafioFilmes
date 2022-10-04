@@ -46,7 +46,7 @@ class ListaFilmesAdapter() :
 
         init {
             itemView.setOnClickListener {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(bindingAdapterPosition)
             }
         }
 

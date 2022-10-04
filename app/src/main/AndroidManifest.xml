@@ -16,9 +16,12 @@
         android:theme="@style/Theme.DesafioFilmesRefeito"
         tools:targetApi="31">
         <activity
-            android:name=".activity.DescricaoFilme"
-            android:parentActivityName="com.example.desafiofilmes.activity.ListaFilmesActivity"
+            android:name=".activity.FilmesFavoritosActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.DescricaoFilme"
+            android:exported="false"
+            android:parentActivityName="com.example.desafiofilmes.activity.ListaFilmesActivity" />
         <activity
             android:name="com.example.desafiofilmes.activity.ListaFilmesActivity"
             android:exported="true">

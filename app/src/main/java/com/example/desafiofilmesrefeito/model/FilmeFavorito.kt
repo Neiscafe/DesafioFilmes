@@ -6,9 +6,10 @@ import com.example.desafiofilmes.model.Filme
 
 @Entity
 class FilmeFavorito (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private val id: Int,
     private val favoritos: Filme,
-    val notaDoUsuario: Float = -1f
+    private val notaDoUsuario: Float = -1f
 ){
 
 
