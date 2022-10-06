@@ -3,10 +3,7 @@ package com.example.desafiofilmes.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -30,16 +27,16 @@ import java.io.IOException
 class ListaFilmesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListaFilmesBinding
-    private val listaFilmes: ArrayList<Filme> = arrayListOf()
+    private var pagina = 1
+    private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
+    private val listaFilmes: MutableList<Filme> = mutableListOf()
+
     val retrofit by lazy {
         RetrofitInicializador().retrofit
     }
     val mainAdapter by lazy {
         ListaFilmesAdapter()
     }
-
-    private var pagina = 1
-    private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +45,11 @@ class ListaFilmesActivity : AppCompatActivity() {
 
         setTitle("GuilhermeFlix")
 
+        configuraAppBar()
+        pegaDadosApiAssincrono()
+    }
+
+    private fun configuraAppBar() {
         val flecha = binding.appbar.ImageVFlecha
         flecha.isVisible = false
 
@@ -57,7 +59,9 @@ class ListaFilmesActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
 
+    private fun pegaDadosApiAssincrono() {
         lifecycleScope.launchWhenStarted {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 configuraAdapter()
@@ -66,9 +70,41 @@ class ListaFilmesActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        configuraAdapterListener()
+    private fun configuraAdapter() {
+
+        val recyclerView = binding.recyclerView
+        val layoutManager = GridLayoutManager(this@ListaFilmesActivity, 4)
+
+        recyclerView.adapter = mainAdapter
+        recyclerView.layoutManager = layoutManager
+        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
+            override fun onItemClick(posicao: Int) {
+                val filmeEnviado = listaFilmes.get(posicao)
+                val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
+                intent.putExtra("filmeEnviado", filmeEnviado)
+                startActivity(intent)
+            }
+        })
+    }
+
+    private suspend fun populaLista() {
+        try {
+            val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina)
+            if (response.isSuccessful) {
+                listaFilmes.addAll(response.body()!!.results)
+                mainAdapter.populaAdapter(listaFilmes)
+
+                configuraAdapterListener()
+                pagina ++
+
+            } else {
+                Log.d("deu errado", "onCreate: Error")
+            }
+        } catch (e: HttpException) {
+            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
+        } catch (e: IOException) {
+            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
+        }
     }
 
     private fun configuraAdapterListener() {
@@ -100,45 +136,13 @@ class ListaFilmesActivity : AppCompatActivity() {
         binding.recyclerView.addOnScrollListener(recyclerViewListener)
     }
 
+    override fun onResume() {
+        super.onResume()
+        configuraAdapterListener()
+    }
+
     override fun onPause() {
         super.onPause()
         binding.recyclerView.removeOnScrollListener(recyclerViewListener)
-    }
-
-    private suspend fun populaLista() {
-        try {
-            val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina)
-            if (response.isSuccessful) {
-                listaFilmes.addAll(response.body()!!.results)
-                mainAdapter.populaAdapter(listaFilmes)
-
-                configuraAdapterListener()
-                pagina ++
-
-            } else {
-                Log.d("deu errado", "onCreate: Error")
-            }
-        } catch (e: HttpException) {
-            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
-        } catch (e: IOException) {
-            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
-        }
-    }
-
-    private fun configuraAdapter() {
-
-        val recyclerView = binding.recyclerView
-        val layoutManager = GridLayoutManager(this@ListaFilmesActivity, 2)
-
-        recyclerView.adapter = mainAdapter
-        recyclerView.layoutManager = layoutManager
-        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
-            override fun onItemClick(posicao: Int) {
-                val filmeEnviado = listaFilmes.get(posicao)
-                val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
-                intent.putExtra("filmeEnviado", filmeEnviado)
-                startActivity(intent)
-            }
-        })
     }
 }
