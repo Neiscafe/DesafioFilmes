@@ -35,13 +35,15 @@
         <TextView
             android:id="@+id/TextVTitulo"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="8dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ImgVFavoritar"
             app:layout_constraintTop_toBottomOf="@id/ImageVImagemIcone"
+            app:layout_constraintBottom_toTopOf="@id/RatingBNota"
             tools:text="Titulo do filme" />
 
         <ImageView
@@ -55,7 +57,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/TextVTitulo"
             tools:layout_height="40dp"
-            tools:layout_width="40dp" />
+            tools:layout_width="40dp"/>
 
         <RatingBar
             android:id="@+id/RatingBNota"
@@ -80,6 +82,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="15dp"
             android:textSize="20dp"
+            android:fontFamily="sans-serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/RatingBNota"
@@ -92,7 +95,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="sans-serif"
             android:justificationMode="inter_word"
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"

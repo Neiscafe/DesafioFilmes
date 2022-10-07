@@ -26,20 +26,20 @@ abstract class FilmeDatabase : RoomDatabase() {
 
             if (::db.isInitialized) return db
             db = databaseBuilder(context, FilmeDatabase::class.java, "InformacoesBD.bd")
-                .addMigrations(Migration(1, 2) {
-                    it.execSQL("DROP TABLE IF EXISTS 'Filme'")
-                    it.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `Filme` (" +
-                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "`title` TEXT NOT NULL, " +
-                                "`poster_path` TEXT NOT NULL, " +
-                                "`vote_average` FLOAT NOT NULL, " +
-                                "`overview` TEXT NOT NULL, " +
-                                "`release_date` TEXT NOT NULL, " +
-                                "`vote_count` TEXT NOT NULL, " +
-                                "`backdrop_path` TEXT NOT NULL)"
-                    );
-                })
+//                .addMigrations(Migration(1, 2) {
+//                    it.execSQL("DROP TABLE IF EXISTS 'Filme'")
+//                    it.execSQL(
+//                        "CREATE TABLE IF NOT EXISTS `Filme` (" +
+//                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+//                                "`title` TEXT NOT NULL, " +
+//                                "`poster_path` TEXT NOT NULL, " +
+//                                "`vote_average` FLOAT NOT NULL, " +
+//                                "`overview` TEXT NOT NULL, " +
+//                                "`release_date` TEXT NOT NULL, " +
+//                                "`vote_count` TEXT NOT NULL, " +
+//                                "`backdrop_path` TEXT NOT NULL)"
+//                    );
+//                })
                 .build()
             return db
         }

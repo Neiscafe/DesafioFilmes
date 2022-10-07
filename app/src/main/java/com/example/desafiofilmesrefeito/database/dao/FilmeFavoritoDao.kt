@@ -16,4 +16,10 @@ interface FilmeFavoritoDao {
     @Query("SELECT * FROM Filme")
     fun retornaFavoritos(): LiveData<List<Filme>>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM Filme WHERE id = :filmeId) ")
+    suspend fun checaSeExiste(filmeId: Int): Boolean
+
+    @Query("DELETE FROM Filme WHERE id = :filmeId")
+    suspend fun remove(filmeId: Int)
+
 }

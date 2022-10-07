@@ -13,4 +13,12 @@ class FilmeFavoritoRepository(val dao: FilmeFavoritoDao) {
     fun retornaFilmesFavoritos(): LiveData<List<Filme>>{
         return dao.retornaFavoritos()
     }
+
+    suspend fun checaSeExiste(filmeId: Int): Boolean{
+        return dao.checaSeExiste(filmeId)
+    }
+
+    suspend fun remove(filmeId: Int) {
+        dao.remove(filmeId)
+    }
 }

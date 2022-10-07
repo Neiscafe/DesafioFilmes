@@ -5,19 +5,31 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.activity.ListaFilmesActivity
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
+import com.example.desafiofilmesrefeito.database.FilmeDatabase
+import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.util.DataUtil
-import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosActivityViewModel
+import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
+import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
+import kotlinx.coroutines.launch
 
 class DescricaoFilme : AppCompatActivity() {
 
     private lateinit var filmeRecebido: Filme
-    private lateinit var viewModel: FilmesFavoritosActivityViewModel
+    private val viewModel by lazy {
+        val repository =
+            FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
+        val factory = FilmesFavoritosViewModelFactory(repository)
+        ViewModelProviders.of(this, factory).get(FilmesFavoritosViewModel::class.java)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,23 +90,45 @@ class DescricaoFilme : AppCompatActivity() {
     private fun configuraBotaoFavoritar() {
         val botaoFavoritar = findViewById<ImageView>(R.id.ImgVFavoritar)
         botaoFavoritar.setOnClickListener {
-            viewModel.salva(filmeRecebido)
+            lifecycleScope.launch {
+                if (viewModel.checaSeExiste(filmeRecebido.id) == true) {
+                    viewModel.remove(filmeRecebido.id)
+                    Toast.makeText(
+                        this@DescricaoFilme,
+                        "Item removido dos favoritos!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    viewModel.salva(filmeRecebido)
+                    Toast.makeText(
+                        this@DescricaoFilme,
+                        "Item adicionado aos favoritos!",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
         }
     }
 
     private fun configuraAppBar() {
+        criaBotaoVoltarAppBar()
+        criaBotaoFavoritosAppBar()
+    }
+
+    private fun criaBotaoVoltarAppBar() {
         val voltar = findViewById<ImageView>(R.id.ImageVFlecha)
         voltar.setOnClickListener {
             val intent = Intent(this, ListaFilmesActivity::class.java)
             startActivity(intent)
-            finish()
         }
+    }
 
+    private fun criaBotaoFavoritosAppBar() {
         val favoritos = findViewById<TextView>(R.id.TextVFavoritos)
         favoritos.setOnClickListener {
             val intent = Intent(this, FilmesFavoritosActivity::class.java)
             startActivity(intent)
-            finish()
         }
     }
 }

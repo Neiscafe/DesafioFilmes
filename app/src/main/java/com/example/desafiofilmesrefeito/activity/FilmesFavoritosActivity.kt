@@ -14,11 +14,11 @@ import com.example.desafiofilmesrefeito.R
 import com.example.desafiofilmesrefeito.adapter.ListaFavoritosAdapter
 import com.example.desafiofilmesrefeito.database.FilmeDatabase
 import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
-import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosActivityViewModel
-import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosActivityViewModelFactory
+import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
+import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
 
 class FilmesFavoritosActivity : AppCompatActivity() {
-    private lateinit var filmeFavoritado: Filme
+//    private lateinit var filmeFavoritado: Filme
     private lateinit var adapter: ListaFavoritosAdapter
     private lateinit var manager: LinearLayoutManager
     private lateinit var recyclerView: RecyclerView
@@ -26,8 +26,8 @@ class FilmesFavoritosActivity : AppCompatActivity() {
     private val viewModel by lazy {
         val repository =
             FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
-        val factory = FilmesFavoritosActivityViewModelFactory(repository)
-        ViewModelProviders.of(this, factory).get(FilmesFavoritosActivityViewModel::class.java)
+        val factory = FilmesFavoritosViewModelFactory(repository)
+        ViewModelProviders.of(this, factory).get(FilmesFavoritosViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,16 +36,14 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
         inicializaItensLista()
 
-        capturaIntent()
-
         salvaNoBancoAssincrona()
 
         implementandoClickListener()
 
-        criaBotaoVoltarAppBar()
-
-        criaBotaoFavoritosAppBar()
+        configuraAppBar()
     }
+
+
 
     private fun inicializaItensLista() {
         recyclerView = findViewById(R.id.recyclerViewFavoritos)
@@ -57,11 +55,10 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
     private fun capturaIntent() {
         val extra = intent
-        filmeFavoritado = extra.getSerializableExtra("FilmeFavoritado") as Filme
+//        filmeFavoritado = extra.getSerializableExtra("FilmeFavoritado") as Filme
     }
 
     private fun salvaNoBancoAssincrona() {
-        viewModel.salva(filmeFavoritado)
         viewModel.filmesFavoritos.observe(this) { listaAtualizada ->
             adapter.populaAdapter(listaAtualizada)
         }
@@ -75,6 +72,10 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         })
     }
 
+    private fun configuraAppBar() {
+        criaBotaoVoltarAppBar()
+    }
+
     private fun criaBotaoVoltarAppBar() {
         val voltar = findViewById<ImageView>(R.id.ImageVFlecha)
         voltar.setOnClickListener {
@@ -84,12 +85,4 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         }
     }
 
-    private fun criaBotaoFavoritosAppBar() {
-        val favoritos = findViewById<TextView>(R.id.TextVFavoritos)
-        favoritos.setOnClickListener {
-            val intent = Intent(this, FilmesFavoritosActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
 }

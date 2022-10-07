@@ -19,13 +19,11 @@ data class Filme(
 
 
     fun concatPoster(): String {
-        val imagemPosterCarregada = "https://image.tmdb.org/t/p/w500" + poster_path
-        return imagemPosterCarregada
+        return "https://image.tmdb.org/t/p/w500$poster_path"
     }
 
     fun concatFundo(): String {
-        val imagemFundoCarregada = "https://image.tmdb.org/t/p/w500" + backdrop_path
-        return imagemFundoCarregada
+        return "https://image.tmdb.org/t/p/w500$backdrop_path"
     }
 
 }

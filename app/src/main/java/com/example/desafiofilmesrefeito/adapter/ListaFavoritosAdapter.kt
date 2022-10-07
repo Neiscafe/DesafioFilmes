@@ -1,14 +1,17 @@
 package com.example.desafiofilmesrefeito.adapter
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
+import com.example.desafiofilmesrefeito.util.DataUtil
 
 class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHolder>() {
 
@@ -31,6 +34,7 @@ class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHol
         return ViewHolder(view, mListener)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val filme = listaFavoritos[position]
         holder.vincula(filme)
@@ -49,13 +53,14 @@ class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHol
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun vincula(filme: Filme) {
-            val imgVposter = itemView.findViewById<ImageView>(R.id.ImageVPosterFav)
-            Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
+            val imgVposterFavorito = itemView.findViewById<ImageView>(R.id.ImageVPosterFav)
+            Glide.with(itemView).load(filme.concatPoster()).into(imgVposterFavorito)
             val titulo = itemView.findViewById<TextView>(R.id.TextVTituloFav)
             titulo.text = filme.title.uppercase()
             val data = itemView.findViewById<TextView>(R.id.TextVDataFav)
-            data.text = filme.release_date
+            data.text = DataUtil.periodoEmTextoApenasAno(filme.release_date)
         }
 
     }

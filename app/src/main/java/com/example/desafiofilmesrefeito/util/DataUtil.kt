@@ -13,8 +13,14 @@ object DataUtil {
 
         val dataParse = LocalDate.from(DateTimeFormatter.ofPattern("yyyy-MM-dd").parse(data))
         val dataFormatada = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dataParse)
-        Log.i("arrumando data", "periodoEmTexto: $dataFormatada")
         return dataFormatada
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun periodoEmTextoApenasAno(data: String): String{
+        val dataParse = LocalDate.from(DateTimeFormatter.ofPattern("yyyy-MM-dd").parse(data))
+        val dataFormatada = DateTimeFormatter.ofPattern("yyyy").format(dataParse)
+        return dataFormatada
     }
 }
