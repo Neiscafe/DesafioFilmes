@@ -21,4 +21,5 @@ class FilmeFavoritoRepository(val dao: FilmeFavoritoDao) {
     suspend fun remove(filmeId: Int) {
         dao.remove(filmeId)
     }
+
 }

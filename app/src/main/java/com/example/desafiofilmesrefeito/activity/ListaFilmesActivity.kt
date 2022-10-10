@@ -1,8 +1,10 @@
 package com.example.desafiofilmes.activity
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -27,7 +29,6 @@ import java.io.IOException
 
 class ListaFilmesActivity : AppCompatActivity() {
 
-    private var listaFilmesSelecionados = mutableListOf<Filme>()
     private lateinit var binding: ActivityListaFilmesBinding
     private var pagina = 1
     private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
@@ -66,7 +67,6 @@ class ListaFilmesActivity : AppCompatActivity() {
         lifecycleScope.launchWhenStarted {
             configuraAdapter()
             populaLista()
-
         }
     }
 
@@ -77,24 +77,6 @@ class ListaFilmesActivity : AppCompatActivity() {
 
         recyclerView.adapter = mainAdapter
         recyclerView.layoutManager = layoutManager
-
-        mainAdapter.itemLongoClickListener = {
-
-        }
-        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
-            override fun onItemClick(posicao: Int) {
-                val filmeSendoEnviado = listaFilmes[posicao]
-                val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
-                intent.putExtra("filmeEnviado", filmeSendoEnviado)
-                startActivityForResult(intent, 0)
-            }
-
-            override fun onItemLongClick(posicao: Int) {
-                var filmeSelecionado = listaFilmes[posicao]
-                listaFilmesSelecionados.add(filmeSelecionado)
-
-            }
-        })
     }
 
     private suspend fun populaLista() {
@@ -105,6 +87,7 @@ class ListaFilmesActivity : AppCompatActivity() {
                 mainAdapter.populaAdapter(listaFilmes)
 
                 configuraAdapterListener()
+                configuraLongListener()
                 pagina++
 
             } else {
@@ -115,6 +98,35 @@ class ListaFilmesActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
         }
+    }
+
+    private fun configuraLongListener() {
+        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
+            override fun onItemClick(posicao: Int) {
+
+                if (!listaFilmes[posicao].selected) {
+                    val filmeSendoEnviado = listaFilmes[posicao]
+                    val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
+                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
+                    startActivity(intent)
+                } else {
+                    listaFilmes[posicao].selected = false
+                    mainAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onItemLongClick(posicao: Int) {
+                if (listaFilmes[posicao].selected == false) {
+                    Log.i(TAG, "onItemLongClick: posicao é falsa")
+                    listaFilmes[posicao].selected = true
+                    mainAdapter.notifyDataSetChanged()
+                } else {
+                    Log.i(TAG, "onItemLongClick: posicao é verdadeira")
+                    listaFilmes[posicao].selected = false
+                    mainAdapter.notifyDataSetChanged()
+                }
+            }
+        })
     }
 
     private fun configuraAdapterListener() {

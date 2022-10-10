@@ -1,10 +1,12 @@
 package com.example.desafiofilmes.adapter
 
+import android.media.Image
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
@@ -15,6 +17,7 @@ class ListaFilmesAdapter() :
 
     private lateinit var mListener: onItemClickListener
     lateinit var itemLongoClickListener: (position: Int) -> Unit
+
 
 
     interface onItemClickListener {
@@ -51,8 +54,6 @@ class ListaFilmesAdapter() :
     ) :
         RecyclerView.ViewHolder(itemView) {
 
-        private var isEnable = false
-
         init {
             itemView.setOnClickListener {
                 listener.onItemClick(bindingAdapterPosition)
@@ -68,10 +69,12 @@ class ListaFilmesAdapter() :
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
             Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
 
-        }
-
-        private fun selectItem(item: Filme, posicao: Int) {
-            isEnable = true
+            val imagemBolinha = itemView.findViewById<ImageView>(R.id.ImageVBolinha)
+            if(filme.selected){
+                imagemBolinha.isVisible = true
+            }else{
+                imagemBolinha.isVisible = false
+            }
         }
 
     }

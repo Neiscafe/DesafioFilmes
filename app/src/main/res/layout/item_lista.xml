@@ -13,5 +13,13 @@
         android:layout_height="150dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/ImageVBolinha"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        app:layout_constraintEnd_toEndOf="@id/imageview_poster"
+        app:layout_constraintTop_toTopOf="@id/imageview_poster"
+        android:src="@drawable/ic_baseline_radio_button_checked_24"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

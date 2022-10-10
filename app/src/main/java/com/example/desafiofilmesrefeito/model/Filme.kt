@@ -14,7 +14,8 @@ data class Filme(
     val overview: String,
     val release_date: String,
     val vote_count: String,
-    val backdrop_path: String
+    val backdrop_path: String,
+    var selected: Boolean
 ) : Serializable {
 
 
