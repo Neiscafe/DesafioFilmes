@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
@@ -26,10 +27,12 @@ import java.io.IOException
 
 class ListaFilmesActivity : AppCompatActivity() {
 
+    private var listaFilmesSelecionados = mutableListOf<Filme>()
     private lateinit var binding: ActivityListaFilmesBinding
     private var pagina = 1
     private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
     private val listaFilmes: MutableList<Filme> = mutableListOf()
+
 
     val retrofit by lazy {
         RetrofitInicializador().retrofit
@@ -42,8 +45,6 @@ class ListaFilmesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        setTitle("GuilhermeFlix")
 
         configuraAppBar()
         pegaDadosApiAssincrono()
@@ -63,10 +64,9 @@ class ListaFilmesActivity : AppCompatActivity() {
 
     private fun pegaDadosApiAssincrono() {
         lifecycleScope.launchWhenStarted {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                configuraAdapter()
-                populaLista()
-            }
+            configuraAdapter()
+            populaLista()
+
         }
     }
 
@@ -77,12 +77,22 @@ class ListaFilmesActivity : AppCompatActivity() {
 
         recyclerView.adapter = mainAdapter
         recyclerView.layoutManager = layoutManager
+
+        mainAdapter.itemLongoClickListener = {
+
+        }
         mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
-                val filmeEnviado = listaFilmes.get(posicao)
+                val filmeSendoEnviado = listaFilmes[posicao]
                 val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
-                intent.putExtra("filmeEnviado", filmeEnviado)
-                startActivity(intent)
+                intent.putExtra("filmeEnviado", filmeSendoEnviado)
+                startActivityForResult(intent, 0)
+            }
+
+            override fun onItemLongClick(posicao: Int) {
+                var filmeSelecionado = listaFilmes[posicao]
+                listaFilmesSelecionados.add(filmeSelecionado)
+
             }
         })
     }
@@ -95,7 +105,7 @@ class ListaFilmesActivity : AppCompatActivity() {
                 mainAdapter.populaAdapter(listaFilmes)
 
                 configuraAdapterListener()
-                pagina ++
+                pagina++
 
             } else {
                 Log.d("deu errado", "onCreate: Error")
@@ -108,7 +118,7 @@ class ListaFilmesActivity : AppCompatActivity() {
     }
 
     private fun configuraAdapterListener() {
-        if (::recyclerViewListener.isInitialized){
+        if (::recyclerViewListener.isInitialized) {
             binding.recyclerView.removeOnScrollListener(recyclerViewListener)
         }
         recyclerViewListener = object : RecyclerView.OnScrollListener() {

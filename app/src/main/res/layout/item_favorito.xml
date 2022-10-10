@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_margin="3dp">
 
     <ImageView
         android:id="@+id/ImageVPosterFav"
@@ -16,7 +16,7 @@
     <TextView
         android:id="@+id/TextVTituloFav"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/TextVDataFav"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,20 +29,23 @@
     <TextView
         android:id="@+id/TextVDataFav"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@id/ImageVPosterFav"
+        app:layout_constraintBottom_toTopOf="@id/ratingBNotaFav"
         app:layout_constraintEnd_toEndOf="@id/TextVTituloFav"
         app:layout_constraintStart_toStartOf="@id/TextVTituloFav"
         app:layout_constraintTop_toBottomOf="@id/TextVTituloFav"
         tools:text="2022" />
 
     <RatingBar
+        android:id="@+id/ratingBNotaFav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/ImageVPosterFav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ImageVPosterFav"
-        app:layout_constraintTop_toBottomOf="@id/TextVDataFav"/>
+        app:layout_constraintTop_toBottomOf="@id/TextVDataFav"
+        app:layout_constraintVertical_bias="1.0"
+        android:stepSize="0.5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

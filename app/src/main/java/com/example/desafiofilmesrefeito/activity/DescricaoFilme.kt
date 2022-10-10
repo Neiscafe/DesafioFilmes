@@ -3,13 +3,14 @@ package com.example.desafiofilmesrefeito.activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.MenuItem
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.activity.ListaFilmesActivity
 import com.example.desafiofilmes.model.Filme
@@ -19,11 +20,14 @@ import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.util.DataUtil
 import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
 import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DescricaoFilme : AppCompatActivity() {
 
+    private lateinit var botaoFavoritar: ToggleButton
     private lateinit var filmeRecebido: Filme
+    private var favoritado: Boolean = false
     private val viewModel by lazy {
         val repository =
             FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
@@ -36,13 +40,19 @@ class DescricaoFilme : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_descricao_filme)
 
-
-        setTitle("GuilhermeFlix")
-
         capturaIntent()
+
+        checaSeFilmeExiste()
 
         configuraElementosDaTela()
 
+    }
+
+    private fun checaSeFilmeExiste() {
+        botaoFavoritar = findViewById(R.id.ToggleBFavoritar)
+        lifecycleScope.launch {
+            botaoFavoritar.isChecked = viewModel.checaSeExiste(filmeRecebido.id)
+        }
     }
 
     private fun capturaIntent() {
@@ -88,28 +98,15 @@ class DescricaoFilme : AppCompatActivity() {
     }
 
     private fun configuraBotaoFavoritar() {
-        val botaoFavoritar = findViewById<ImageView>(R.id.ImgVFavoritar)
-        botaoFavoritar.setOnClickListener {
-            lifecycleScope.launch {
-                if (viewModel.checaSeExiste(filmeRecebido.id) == true) {
-                    viewModel.remove(filmeRecebido.id)
-                    Toast.makeText(
-                        this@DescricaoFilme,
-                        "Item removido dos favoritos!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    viewModel.salva(filmeRecebido)
-                    Toast.makeText(
-                        this@DescricaoFilme,
-                        "Item adicionado aos favoritos!",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
+        botaoFavoritar.setOnCheckedChangeListener { compoundButton, b ->
+            if (b) {
+                viewModel.salva(filmeRecebido)
+            } else {
+                viewModel.remove(filmeRecebido.id)
             }
         }
     }
+
 
     private fun configuraAppBar() {
         criaBotaoVoltarAppBar()

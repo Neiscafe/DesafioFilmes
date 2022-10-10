@@ -17,7 +17,6 @@ abstract class FilmeDatabase : RoomDatabase() {
 
     abstract fun getFilmeFavoritoDao(): FilmeFavoritoDao
 
-
     companion object factory {
 
         private lateinit var db: FilmeDatabase
