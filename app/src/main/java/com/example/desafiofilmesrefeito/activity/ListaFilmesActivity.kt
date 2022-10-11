@@ -8,11 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
@@ -21,7 +19,11 @@ import com.example.desafiofilmesrefeito.R
 import com.example.desafiofilmesrefeito.RetrofitInicializador
 import com.example.desafiofilmesrefeito.activity.DescricaoFilme
 import com.example.desafiofilmesrefeito.activity.FilmesFavoritosActivity
+import com.example.desafiofilmesrefeito.database.FilmeDatabase
 import com.example.desafiofilmesrefeito.databinding.ActivityListaFilmesBinding
+import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
+import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
+import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -29,12 +31,19 @@ import java.io.IOException
 
 class ListaFilmesActivity : AppCompatActivity() {
 
+    private var listaSelecionados = mutableListOf<Filme>()
+    private var estado: Int = 0
     private lateinit var binding: ActivityListaFilmesBinding
     private var pagina = 1
     private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
     private val listaFilmes: MutableList<Filme> = mutableListOf()
 
-
+    private val viewModel by lazy {
+        val repository =
+            FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
+        val factory = FilmesFavoritosViewModelFactory(repository)
+        ViewModelProviders.of(this, factory).get(FilmesFavoritosViewModel::class.java)
+    }
     val retrofit by lazy {
         RetrofitInicializador().retrofit
     }
@@ -47,19 +56,42 @@ class ListaFilmesActivity : AppCompatActivity() {
         binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        configuraAppBar()
+
         pegaDadosApiAssincrono()
+        configuraAppBar()
+
     }
 
     private fun configuraAppBar() {
         val flecha = binding.appbar.ImageVFlecha
+        var iconeFavoritar = findViewById<ImageView>(R.id.ImageVIconeFavoritar)
+        var favoritos = findViewById<TextView>(R.id.TextVFavoritos)
         flecha.isVisible = false
 
-        val favoritos = findViewById<TextView>(R.id.TextVFavoritos)
-        favoritos.setOnClickListener {
-            val intent = Intent(this, FilmesFavoritosActivity::class.java)
-            startActivity(intent)
-            finish()
+        if (estado > 0) {
+            iconeFavoritar.isVisible = true
+            favoritos.isVisible = false
+
+            iconeFavoritar.setOnClickListener {
+                for (filme in listaSelecionados) {
+                    viewModel.salva(filme)
+                    iconeFavoritar.isVisible = false
+                    favoritos.isVisible = true
+                    filme.selected = false
+                    mainAdapter.notifyDataSetChanged()
+                    estado = 0
+                }
+
+            }
+        } else {
+            favoritos.isVisible = true
+            iconeFavoritar.isVisible = false
+
+            favoritos.setOnClickListener {
+                val intent = Intent(this, FilmesFavoritosActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -111,19 +143,26 @@ class ListaFilmesActivity : AppCompatActivity() {
                     startActivity(intent)
                 } else {
                     listaFilmes[posicao].selected = false
+                    estado--
+                    listaSelecionados.remove(listaFilmes[posicao])
                     mainAdapter.notifyDataSetChanged()
+                    configuraAppBar()
                 }
             }
 
             override fun onItemLongClick(posicao: Int) {
                 if (listaFilmes[posicao].selected == false) {
-                    Log.i(TAG, "onItemLongClick: posicao é falsa")
                     listaFilmes[posicao].selected = true
+                    estado++
+                    listaSelecionados.add(listaFilmes[posicao])
                     mainAdapter.notifyDataSetChanged()
+                    configuraAppBar()
                 } else {
-                    Log.i(TAG, "onItemLongClick: posicao é verdadeira")
                     listaFilmes[posicao].selected = false
+                    estado--
+                    listaSelecionados.remove(listaFilmes[posicao])
                     mainAdapter.notifyDataSetChanged()
+                    configuraAppBar()
                 }
             }
         })

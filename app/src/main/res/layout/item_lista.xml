@@ -15,8 +15,8 @@
         app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/ImageVBolinha"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@id/imageview_poster"
         app:layout_constraintTop_toTopOf="@id/imageview_poster"
         android:src="@drawable/ic_baseline_radio_button_checked_24"

@@ -60,7 +60,6 @@ class ListaFilmesAdapter() :
             }
             itemView.setOnLongClickListener{
                 listener.onItemLongClick(bindingAdapterPosition)
-                Log.i("CLF" , "CLICK: ")
                 true
             }
         }
@@ -70,13 +69,8 @@ class ListaFilmesAdapter() :
             Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
 
             val imagemBolinha = itemView.findViewById<ImageView>(R.id.ImageVBolinha)
-            if(filme.selected){
-                imagemBolinha.isVisible = true
-            }else{
-                imagemBolinha.isVisible = false
-            }
+            imagemBolinha.isVisible = filme.selected
         }
-
     }
 
     fun populaAdapter(novaLista: List<Filme>) {
