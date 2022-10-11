@@ -31,21 +31,46 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/ratingBNotaFav"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="@id/TextVTituloFav"
         app:layout_constraintStart_toStartOf="@id/TextVTituloFav"
         app:layout_constraintTop_toBottomOf="@id/TextVTituloFav"
         tools:text="2022" />
 
-    <RatingBar
-        android:id="@+id/ratingBNotaFav"
-        android:layout_width="0dp"
+<!--    <RatingBar-->
+<!--        android:id="@+id/ratingBNotaFav"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/ImageVPosterFav"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@id/ImageVPosterFav"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/TextVDataFav"-->
+<!--        app:layout_constraintVertical_bias="1.0"-->
+<!--        android:stepSize="0.5"/>-->
+
+    <ImageView
+        android:id="@+id/ImageVFavoritado"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/ImageVPosterFav"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ImageVPosterFav"
-        app:layout_constraintTop_toBottomOf="@id/TextVDataFav"
-        app:layout_constraintVertical_bias="1.0"
-        android:stepSize="0.5"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_baseline_favorite_24"
+        app:layout_constraintHorizontal_bias="0.27"
+        app:layout_constraintVertical_bias="0.7"/>
+
+    <ImageView
+        android:id="@+id/ImageVBolinhaFavoritos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintVertical_bias="0.4"
+        android:src="@drawable/ic_baseline_radio_button_checked_24"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

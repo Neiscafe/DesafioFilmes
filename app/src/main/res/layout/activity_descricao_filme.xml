@@ -43,7 +43,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ToggleBFavoritar"
             app:layout_constraintTop_toBottomOf="@id/ImageVImagemIcone"
-            app:layout_constraintBottom_toTopOf="@id/RatingBNota"
+            app:layout_constraintBottom_toTopOf="@id/TextVDataLancamento"
             tools:text="Titulo do filme" />
 
         <ToggleButton
@@ -60,22 +60,22 @@
             android:textSize="0dp"
             />
 
-        <RatingBar
-            android:id="@+id/RatingBNota"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/TextVTitulo"/>
+<!--        <RatingBar-->
+<!--            android:id="@+id/RatingBNota"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="8dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/TextVTitulo"/>-->
 
-        <Button
-            android:id="@+id/bAvaliar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="Avaliar"
-            app:layout_constraintBottom_toBottomOf="@id/RatingBNota"
-            app:layout_constraintStart_toEndOf="@id/RatingBNota" />
+<!--        <Button-->
+<!--            android:id="@+id/bAvaliar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="8dp"-->
+<!--            android:text="Avaliar"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/RatingBNota"-->
+<!--            app:layout_constraintStart_toEndOf="@id/RatingBNota" />-->
 
         <TextView
             android:id="@+id/TextVDataLancamento"
@@ -87,7 +87,7 @@
             android:fontFamily="sans-serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/RatingBNota"
+            app:layout_constraintTop_toBottomOf="@id/TextVTitulo"
             tools:text="Data do filme" />
 
         <TextView

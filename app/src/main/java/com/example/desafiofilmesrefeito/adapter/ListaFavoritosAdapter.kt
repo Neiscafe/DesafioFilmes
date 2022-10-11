@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.desafiofilmes.model.Filme
@@ -19,6 +20,7 @@ class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHol
 
     interface onItemClickListener {
         fun onItemClick(posicao: Int)
+        fun onItemLongClick(posicao: Int)
     }
 
     fun setOnItemClickListener(listener: onItemClickListener) {
@@ -51,6 +53,10 @@ class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHol
             itemView.setOnClickListener {
                 listener.onItemClick(bindingAdapterPosition)
             }
+            itemView.setOnLongClickListener{
+                listener.onItemLongClick(bindingAdapterPosition)
+                true
+            }
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
@@ -61,6 +67,9 @@ class ListaFavoritosAdapter : RecyclerView.Adapter<ListaFavoritosAdapter.ViewHol
             titulo.text = filme.title.uppercase()
             val data = itemView.findViewById<TextView>(R.id.TextVDataFav)
             data.text = DataUtil.periodoEmTextoApenasAno(filme.release_date)
+
+            val imagemBolinha = itemView.findViewById<ImageView>(R.id.ImageVBolinhaFavoritos)
+            imagemBolinha.isVisible = filme.selected
         }
 
     }

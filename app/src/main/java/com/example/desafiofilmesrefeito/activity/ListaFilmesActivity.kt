@@ -56,7 +56,6 @@ class ListaFilmesActivity : AppCompatActivity() {
         binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         pegaDadosApiAssincrono()
         configuraAppBar()
 
@@ -147,6 +146,7 @@ class ListaFilmesActivity : AppCompatActivity() {
                     listaSelecionados.remove(listaFilmes[posicao])
                     mainAdapter.notifyDataSetChanged()
                     configuraAppBar()
+                    estado = 0
                 }
             }
 
@@ -163,6 +163,7 @@ class ListaFilmesActivity : AppCompatActivity() {
                     listaSelecionados.remove(listaFilmes[posicao])
                     mainAdapter.notifyDataSetChanged()
                     configuraAppBar()
+                    estado = 0
                 }
             }
         })

@@ -19,7 +19,6 @@ class ListaFilmesAdapter() :
     lateinit var itemLongoClickListener: (position: Int) -> Unit
 
 
-
     interface onItemClickListener {
         fun onItemClick(posicao: Int)
         fun onItemLongClick(posicao: Int)

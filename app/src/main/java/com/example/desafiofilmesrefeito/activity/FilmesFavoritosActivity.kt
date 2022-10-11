@@ -17,13 +17,14 @@ import com.example.desafiofilmesrefeito.database.FilmeDatabase
 import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
 import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
-import org.w3c.dom.Text
 
 class FilmesFavoritosActivity : AppCompatActivity() {
-    private lateinit var listaDeFavoritos: List<Filme>
+    private var listaSelecionados = mutableListOf<Filme>()
+    private lateinit var listaFilmes: List<Filme>
     private lateinit var adapter: ListaFavoritosAdapter
     private lateinit var manager: LinearLayoutManager
     private lateinit var recyclerView: RecyclerView
+    private var estado = 0
 
     private val viewModel by lazy {
         val repository =
@@ -38,9 +39,9 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
         inicializaItensLista()
 
-        PopulaListaAssincrona()
+        populaListaAssincrona()
 
-        implementandoClickListener()
+        configuraLongListener()
 
         configuraAppBar()
     }
@@ -54,24 +55,53 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         recyclerView.layoutManager = manager
     }
 
-    private fun PopulaListaAssincrona() {
+    private fun populaListaAssincrona() {
         viewModel.filmesFavoritos.observe(this) { listaAtualizada ->
-            listaDeFavoritos = listaAtualizada
+            listaFilmes = listaAtualizada
             adapter.populaAdapter(listaAtualizada)
-            if(listaAtualizada.isEmpty()){
+            if (listaAtualizada.isEmpty()) {
                 val listaVazia = findViewById<TextView>(R.id.TextVListaVazia)
                 listaVazia.isVisible = true
             }
         }
     }
 
-    private fun implementandoClickListener() {
+    private fun configuraLongListener() {
         adapter.setOnItemClickListener(object : ListaFavoritosAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
-                val filmeSendoEnviado = listaDeFavoritos.get(posicao)
-                val intent = Intent(this@FilmesFavoritosActivity, DescricaoFilme::class.java)
-                intent.putExtra("filmeEnviado", filmeSendoEnviado)
-                startActivityForResult(intent, 1)
+
+                for (filme in listaFilmes) {
+                    listaFilmes[posicao].selected = false
+                }
+
+                if (!listaFilmes[posicao].selected) {
+                    val filmeSendoEnviado = listaFilmes[posicao]
+                    val intent = Intent(this@FilmesFavoritosActivity, DescricaoFilme::class.java)
+                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
+                    startActivity(intent)
+                } else {
+                    listaFilmes[posicao].selected = false
+                    estado--
+                    listaSelecionados.remove(listaFilmes[posicao])
+                    adapter.notifyDataSetChanged()
+                    configuraAppBar()
+                }
+            }
+
+            override fun onItemLongClick(posicao: Int) {
+                if (listaFilmes[posicao].selected == false) {
+                    listaFilmes[posicao].selected = true
+                    estado++
+                    listaSelecionados.add(listaFilmes[posicao])
+                    adapter.notifyDataSetChanged()
+                    configuraAppBar()
+                } else {
+                    listaFilmes[posicao].selected = false
+                    estado--
+                    listaSelecionados.remove(listaFilmes[posicao])
+                    adapter.notifyDataSetChanged()
+                    configuraAppBar()
+                }
             }
         })
     }
@@ -80,6 +110,23 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         setTitle("Favoritos")
         criaBotaoVoltarAppBar()
         ocultaBotaoFavoritos()
+        var iconeFavoritar = findViewById<ImageView>(R.id.ImageVIconeFavoritar)
+
+        if (estado > 0) {
+            iconeFavoritar.isVisible = true
+
+            iconeFavoritar.setOnClickListener {
+                for (filme in listaSelecionados) {
+                    viewModel.remove(filme.id)
+                    iconeFavoritar.isVisible = false
+                    filme.selected = false
+                    adapter.notifyDataSetChanged()
+                    estado = 0
+                }
+            }
+        } else {
+            iconeFavoritar.isVisible = false
+        }
     }
 
     private fun criaBotaoVoltarAppBar() {
@@ -87,7 +134,6 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         voltar.setOnClickListener {
             val intent = Intent(this, ListaFilmesActivity::class.java)
             startActivity(intent)
-            finish()
         }
     }
 
