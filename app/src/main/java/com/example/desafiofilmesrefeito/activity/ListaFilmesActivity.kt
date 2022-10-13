@@ -1,6 +1,5 @@
 package com.example.desafiofilmes.activity
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -32,11 +31,13 @@ import java.io.IOException
 class ListaFilmesActivity : AppCompatActivity() {
 
     private var listaSelecionados = mutableListOf<Filme>()
-    private var estado: Int = 0
+    private var listaFilmes = mutableListOf<Filme>()
+    private var numeroItensSelecionados: Int = 0
     private lateinit var binding: ActivityListaFilmesBinding
-    private var pagina = 1
     private lateinit var recyclerViewListener: RecyclerView.OnScrollListener
-    private val listaFilmes: MutableList<Filme> = mutableListOf()
+    private lateinit var voltar: ImageView
+    private lateinit var iconeFavoritar: ImageView
+    private lateinit var favoritos: TextView
 
     private val viewModel by lazy {
         val repository =
@@ -44,54 +45,19 @@ class ListaFilmesActivity : AppCompatActivity() {
         val factory = FilmesFavoritosViewModelFactory(repository)
         ViewModelProviders.of(this, factory).get(FilmesFavoritosViewModel::class.java)
     }
-    val retrofit by lazy {
-        RetrofitInicializador().retrofit
-    }
+
     val mainAdapter by lazy {
         ListaFilmesAdapter()
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        pegaDadosApiAssincrono()
         configuraAppBar()
-
-    }
-
-    private fun configuraAppBar() {
-        val flecha = binding.appbar.ImageVFlecha
-        var iconeFavoritar = findViewById<ImageView>(R.id.ImageVIconeFavoritar)
-        var favoritos = findViewById<TextView>(R.id.TextVFavoritos)
-        flecha.isVisible = false
-
-        if (estado > 0) {
-            iconeFavoritar.isVisible = true
-            favoritos.isVisible = false
-
-            iconeFavoritar.setOnClickListener {
-                for (filme in listaSelecionados) {
-                    viewModel.salva(filme)
-                    iconeFavoritar.isVisible = false
-                    favoritos.isVisible = true
-                    filme.selected = false
-                    mainAdapter.notifyDataSetChanged()
-                    estado = 0
-                }
-
-            }
-        } else {
-            favoritos.isVisible = true
-            iconeFavoritar.isVisible = false
-
-            favoritos.setOnClickListener {
-                val intent = Intent(this, FilmesFavoritosActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
+        pegaDadosApiAssincrono()
     }
 
     private fun pegaDadosApiAssincrono() {
@@ -110,63 +76,15 @@ class ListaFilmesActivity : AppCompatActivity() {
         recyclerView.layoutManager = layoutManager
     }
 
-    private suspend fun populaLista() {
-        try {
-            val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina)
-            if (response.isSuccessful) {
-                listaFilmes.addAll(response.body()!!.results)
-                mainAdapter.populaAdapter(listaFilmes)
+    private fun populaLista() {
+        lifecycleScope.launch {
+            val response = viewModel.populaLista()
+            listaFilmes.addAll(response)
+            mainAdapter.populaAdapter(listaFilmes)
 
-                configuraAdapterListener()
-                configuraLongListener()
-                pagina++
-
-            } else {
-                Log.d("deu errado", "onCreate: Error")
-            }
-        } catch (e: HttpException) {
-            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
-        } catch (e: IOException) {
-            Log.d("deu errado", "onCreate: ${e.printStackTrace()}")
+            configuraAdapterListener()
+            configuraClickListener()
         }
-    }
-
-    private fun configuraLongListener() {
-        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
-            override fun onItemClick(posicao: Int) {
-
-                if (!listaFilmes[posicao].selected) {
-                    val filmeSendoEnviado = listaFilmes[posicao]
-                    val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
-                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
-                    startActivity(intent)
-                } else {
-                    listaFilmes[posicao].selected = false
-                    estado--
-                    listaSelecionados.remove(listaFilmes[posicao])
-                    mainAdapter.notifyDataSetChanged()
-                    configuraAppBar()
-                    estado = 0
-                }
-            }
-
-            override fun onItemLongClick(posicao: Int) {
-                if (listaFilmes[posicao].selected == false) {
-                    listaFilmes[posicao].selected = true
-                    estado++
-                    listaSelecionados.add(listaFilmes[posicao])
-                    mainAdapter.notifyDataSetChanged()
-                    configuraAppBar()
-                } else {
-                    listaFilmes[posicao].selected = false
-                    estado--
-                    listaSelecionados.remove(listaFilmes[posicao])
-                    mainAdapter.notifyDataSetChanged()
-                    configuraAppBar()
-                    estado = 0
-                }
-            }
-        })
     }
 
     private fun configuraAdapterListener() {
@@ -178,7 +96,6 @@ class ListaFilmesActivity : AppCompatActivity() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (dy > 0) {
-                    println("scroll vertical é maior que zero")
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
                     val visibleItemCount = layoutManager.childCount
@@ -186,7 +103,6 @@ class ListaFilmesActivity : AppCompatActivity() {
                     val totalItemCount = layoutManager.itemCount
 
                     if (totalItemVisible >= totalItemCount) {
-                        println("total de itens visíveis é maior ou igual ao número de itens")
                         binding.recyclerView.removeOnScrollListener(recyclerViewListener)
                         lifecycleScope.launch {
                             populaLista()
@@ -196,6 +112,81 @@ class ListaFilmesActivity : AppCompatActivity() {
             }
         }
         binding.recyclerView.addOnScrollListener(recyclerViewListener)
+    }
+
+    private fun configuraClickListener() {
+        mainAdapter.setOnItemClickListener(object : ListaFilmesAdapter.onItemClickListener {
+            override fun onItemClick(posicao: Int) {
+                if (!listaFilmes[posicao].selected) {
+                    val filmeSendoEnviado = listaFilmes[posicao]
+                    val intent = Intent(this@ListaFilmesActivity, DescricaoFilme::class.java)
+                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
+                    startActivity(intent)
+
+                } else {
+                    listaFilmes[posicao].selected = false
+                    numeroItensSelecionados--
+                    listaSelecionados.remove(listaFilmes[posicao])
+                    atualizarListaSelecionados()
+                }
+            }
+
+            override fun onItemLongClick(posicao: Int) {
+                if (!listaFilmes[posicao].selected) {
+                    listaFilmes[posicao].selected = true
+                    numeroItensSelecionados++
+                    listaSelecionados.add(listaFilmes[posicao])
+                    atualizarListaSelecionados()
+                } else {
+                    listaFilmes[posicao].selected = false
+                    numeroItensSelecionados--
+                    listaSelecionados.remove(listaFilmes[posicao])
+                    atualizarListaSelecionados()
+                }
+            }
+
+            private fun atualizarListaSelecionados() {
+                mainAdapter.notifyDataSetChanged()
+                logicaFilmesSelecionados()
+            }
+        })
+    }
+
+    private fun configuraAppBar() {
+        voltar = findViewById(R.id.ImageVFlecha)
+        iconeFavoritar = findViewById(R.id.ImageVIconeFavoritar)
+        favoritos = findViewById(R.id.TextVFavoritos)
+
+        voltar.isVisible = false
+
+        favoritos.setOnClickListener {
+            val intent = Intent(this, FilmesFavoritosActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    private fun logicaFilmesSelecionados() {
+
+        if (numeroItensSelecionados > 0) {
+            iconeFavoritar.isVisible = true
+            favoritos.isVisible = false
+
+            iconeFavoritar.setOnClickListener {
+                for (filme in listaSelecionados) {
+                    filme.selected = false
+                    viewModel.salva(filme)
+
+                }
+                iconeFavoritar.isVisible = false
+                favoritos.isVisible = true
+            }
+            numeroItensSelecionados = 0
+        } else {
+            iconeFavoritar.isVisible = true
+            favoritos.isVisible = false
+        }
+
     }
 
     override fun onResume() {

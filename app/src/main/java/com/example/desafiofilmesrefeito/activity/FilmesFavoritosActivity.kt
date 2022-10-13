@@ -70,10 +70,6 @@ class FilmesFavoritosActivity : AppCompatActivity() {
         adapter.setOnItemClickListener(object : ListaFavoritosAdapter.onItemClickListener {
             override fun onItemClick(posicao: Int) {
 
-                for (filme in listaFilmes) {
-                    listaFilmes[posicao].selected = false
-                }
-
                 if (!listaFilmes[posicao].selected) {
                     val filmeSendoEnviado = listaFilmes[posicao]
                     val intent = Intent(this@FilmesFavoritosActivity, DescricaoFilme::class.java)
