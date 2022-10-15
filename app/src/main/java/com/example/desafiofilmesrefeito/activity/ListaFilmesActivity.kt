@@ -2,7 +2,6 @@ package com.example.desafiofilmes.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.adapter.ListaFilmesAdapter
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
-import com.example.desafiofilmesrefeito.RetrofitInicializador
 import com.example.desafiofilmesrefeito.activity.DescricaoFilme
 import com.example.desafiofilmesrefeito.activity.FilmesFavoritosActivity
 import com.example.desafiofilmesrefeito.database.FilmeDatabase
@@ -24,8 +22,6 @@ import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
 import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 
 class ListaFilmesActivity : AppCompatActivity() {
@@ -56,8 +52,9 @@ class ListaFilmesActivity : AppCompatActivity() {
         binding = ActivityListaFilmesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        configuraAppBar()
+
         pegaDadosApiAssincrono()
+        configuraAppBar()
     }
 
     private fun pegaDadosApiAssincrono() {
@@ -176,15 +173,14 @@ class ListaFilmesActivity : AppCompatActivity() {
                 for (filme in listaSelecionados) {
                     filme.selected = false
                     viewModel.salva(filme)
-
                 }
-                iconeFavoritar.isVisible = false
+                it.isVisible = false
                 favoritos.isVisible = true
+                mainAdapter.notifyDataSetChanged()
             }
-            numeroItensSelecionados = 0
         } else {
-            iconeFavoritar.isVisible = true
-            favoritos.isVisible = false
+            iconeFavoritar.isVisible = false
+            favoritos.isVisible = true
         }
 
     }

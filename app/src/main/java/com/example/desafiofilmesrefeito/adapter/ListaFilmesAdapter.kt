@@ -39,7 +39,7 @@ class ListaFilmesAdapter() :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val filme = listaFilmes[position]
-        holder.vincula(filme, position)
+        holder.vincula(filme)
 
     }
 
@@ -63,12 +63,13 @@ class ListaFilmesAdapter() :
             }
         }
 
-        fun vincula(filme: Filme, posicao: Int) {
+        fun vincula(filme: Filme) {
             val imgVposter = itemView.findViewById<ImageView>(R.id.imageview_poster)
             Glide.with(itemView).load(filme.concatPoster()).into(imgVposter)
 
             val imagemBolinha = itemView.findViewById<ImageView>(R.id.ImageVBolinha)
             imagemBolinha.isVisible = filme.selected
+
         }
     }
 
@@ -79,5 +80,7 @@ class ListaFilmesAdapter() :
         listaFilmes.addAll(novaLista)
         notifyItemRangeInserted(antigaPosicaoDosItens, novaPosicaoDosItens)
     }
+
+
 
 }
