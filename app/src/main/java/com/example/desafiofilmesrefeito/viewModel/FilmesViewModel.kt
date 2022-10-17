@@ -1,6 +1,5 @@
 package com.example.desafiofilmesrefeito.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,14 +7,14 @@ import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.RetrofitInicializador
 import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
-class FilmesFavoritosViewModel(val repository: FilmeFavoritoRepository) : ViewModel() {
+class FilmesViewModel(val repository: FilmeFavoritoRepository) : ViewModel() {
 
     val filmesFavoritos: LiveData<List<Filme>> = repository.retornaFilmesFavoritos()
 
-    val retrofit = RetrofitInicializador().retrofit
+    val retrofitBuscaTodos = RetrofitInicializador().buscaTodosOsFilmes
+    val retrofitPesquisa = RetrofitInicializador().pesquisaFilmes
+
     private var pagina = 1
 
     fun salva(filme: Filme) {
@@ -35,8 +34,13 @@ class FilmesFavoritosViewModel(val repository: FilmeFavoritoRepository) : ViewMo
     }
 
     suspend fun populaLista(): List<Filme> {
-        val response = retrofit.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina).body()!!.results
+        val response = retrofitBuscaTodos.buscaTodas("9106a44c761c36bbb02f24c16958a56a", pagina).body()!!.results
         pagina++
+        return response
+    }
+
+    suspend fun pesquisar(nomeFilme: String): List<Filme>{
+        val response = retrofitPesquisa.pesquisa("9106a44c761c36bbb02f24c16958a56a", nomeFilme).body()!!.results
         return response
     }
 

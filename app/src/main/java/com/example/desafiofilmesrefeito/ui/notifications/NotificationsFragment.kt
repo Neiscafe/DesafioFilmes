@@ -1,24 +1,37 @@
-package com.example.desafiofilmesrefeito.activity
+package com.example.desafiofilmesrefeito.ui.notifications
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafiofilmes.activity.ListaFilmesActivity
 import com.example.desafiofilmes.model.Filme
 import com.example.desafiofilmesrefeito.R
+import com.example.desafiofilmesrefeito.activity.DescricaoFilme
 import com.example.desafiofilmesrefeito.adapter.ListaFavoritosAdapter
 import com.example.desafiofilmesrefeito.database.FilmeDatabase
+import com.example.desafiofilmesrefeito.databinding.FragmentNotificationsBinding
 import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.viewModel.FilmesViewModel
 import com.example.desafiofilmesrefeito.viewModel.factory.FilmesViewModelFactory
 
-class FilmesFavoritosActivity : AppCompatActivity() {
+class NotificationsFragment : Fragment() {
+
+    private var _binding: FragmentNotificationsBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
     private var listaSelecionados = mutableListOf<Filme>()
     private lateinit var listaFilmes: List<Filme>
     private lateinit var adapter: ListaFavoritosAdapter
@@ -28,14 +41,36 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
     private val viewModel by lazy {
         val repository =
-            FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
+            FilmeFavoritoRepository(FilmeDatabase.getInstance(requireActivity()).getFilmeFavoritoDao())
         val factory = FilmesViewModelFactory(repository)
         ViewModelProviders.of(this, factory).get(FilmesViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_filmes_favoritos)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val notificationsViewModel =
+            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+
+        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+//        val textView: TextView = binding.textNotifications
+//        notificationsViewModel.text.observe(viewLifecycleOwner) {
+//            textView.text = it
+//        }
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         inicializaItensLista()
 
@@ -48,19 +83,19 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
 
     private fun inicializaItensLista() {
-        recyclerView = findViewById(R.id.recyclerViewFavoritos)
+        recyclerView = binding.recyclerViewFavoritos
         adapter = ListaFavoritosAdapter()
-        manager = LinearLayoutManager(this)
+        manager = LinearLayoutManager(requireActivity())
         recyclerView.adapter = adapter
         recyclerView.layoutManager = manager
     }
 
     private fun populaListaAssincrona() {
-        viewModel.filmesFavoritos.observe(this) { listaAtualizada ->
+        viewModel.filmesFavoritos.observe(requireActivity()) { listaAtualizada ->
             listaFilmes = listaAtualizada
             adapter.populaAdapter(listaAtualizada)
             if (listaAtualizada.isEmpty()) {
-                val listaVazia = findViewById<TextView>(R.id.TextVListaVazia)
+                val listaVazia = binding.TextVListaVazia
                 listaVazia.isVisible = true
             }
         }
@@ -72,9 +107,9 @@ class FilmesFavoritosActivity : AppCompatActivity() {
 
                 if (!listaFilmes[posicao].selected) {
                     val filmeSendoEnviado = listaFilmes[posicao]
-                    val intent = Intent(this@FilmesFavoritosActivity, DescricaoFilme::class.java)
-                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
-                    startActivity(intent)
+//                    val intent = Intent(requireActivity(), DescricaoFilme::class.java)
+//                    intent.putExtra("filmeEnviado", filmeSendoEnviado)
+//                    startActivity(intent)
                 } else {
                     listaFilmes[posicao].selected = false
                     estado--
@@ -103,10 +138,9 @@ class FilmesFavoritosActivity : AppCompatActivity() {
     }
 
     private fun configuraAppBar() {
-        setTitle("Favoritos")
         criaBotaoVoltarAppBar()
         ocultaBotaoFavoritos()
-        var iconeFavoritar = findViewById<ImageView>(R.id.ImageVIconeFavoritar)
+        var iconeFavoritar = binding.appbar.ImageVIconeFavoritar
 
         if (estado > 0) {
             iconeFavoritar.isVisible = true
@@ -126,16 +160,15 @@ class FilmesFavoritosActivity : AppCompatActivity() {
     }
 
     private fun criaBotaoVoltarAppBar() {
-        val voltar = findViewById<ImageView>(R.id.ImageVFlecha)
+        val voltar = binding.appbar.ImageVFlecha
         voltar.setOnClickListener {
-            val intent = Intent(this, ListaFilmesActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, ListaFilmesActivity::class.java)
+//            startActivity(intent)
         }
     }
 
     private fun ocultaBotaoFavoritos() {
-        val favoritos = findViewById<TextView>(R.id.TextVFavoritos)
+        val favoritos = binding.appbar.TextVFavoritos
         favoritos.isVisible = false
     }
-
 }

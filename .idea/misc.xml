@@ -21,11 +21,15 @@
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/activity_main2.xml" value="0.1" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/app_bar.xml" value="0.33" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/content_main.xml" value="0.1" />
+        <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/fragment_dashboard.xml" value="0.209375" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/fragment_first.xml" value="0.1" />
+        <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/fragment_home.xml" value="0.209375" />
+        <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/fragment_notifications.xml" value="0.209375" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/fragment_second.xml" value="0.1" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/item_favorito.xml" value="0.22" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/item_lista.xml" value="0.209375" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/layout/lista_tool_bar.xml" value="0.25" />
+        <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20615384615384616" />
         <entry key="..\:/Users/guilh/AndroidStudioProjects/DesafioFilmesRefeito/app/src/main/res/menu/menu.xml" value="0.20462962962962963" />
       </map>
     </option>

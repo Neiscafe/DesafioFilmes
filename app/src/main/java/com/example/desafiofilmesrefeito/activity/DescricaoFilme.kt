@@ -15,8 +15,8 @@ import com.example.desafiofilmesrefeito.R
 import com.example.desafiofilmesrefeito.database.FilmeDatabase
 import com.example.desafiofilmesrefeito.repository.FilmeFavoritoRepository
 import com.example.desafiofilmesrefeito.util.DataUtil
-import com.example.desafiofilmesrefeito.viewModel.FilmesFavoritosViewModel
-import com.example.desafiofilmesrefeito.viewModel.factory.FilmesFavoritosViewModelFactory
+import com.example.desafiofilmesrefeito.viewModel.FilmesViewModel
+import com.example.desafiofilmesrefeito.viewModel.factory.FilmesViewModelFactory
 import kotlinx.coroutines.launch
 
 class DescricaoFilme : AppCompatActivity() {
@@ -26,8 +26,8 @@ class DescricaoFilme : AppCompatActivity() {
     private val viewModel by lazy {
         val repository =
             FilmeFavoritoRepository(FilmeDatabase.getInstance(this).getFilmeFavoritoDao())
-        val factory = FilmesFavoritosViewModelFactory(repository)
-        ViewModelProviders.of(this, factory).get(FilmesFavoritosViewModel::class.java)
+        val factory = FilmesViewModelFactory(repository)
+        ViewModelProviders.of(this, factory).get(FilmesViewModel::class.java)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
