@@ -37,22 +37,10 @@ class HomeFragment : Fragment() {
     private lateinit var voltar: ImageView
     private lateinit var iconeFavoritar: ImageView
     private lateinit var favoritos: TextView
-
-    private val viewModel by lazy {
-        val repository =
-            FilmeFavoritoRepository(
-                FilmeDatabase.getInstance(requireActivity()).getFilmeFavoritoDao()
-            )
-        val factory = FilmesViewModelFactory(repository)
-        ViewModelProviders.of(this, factory).get(FilmesViewModel::class.java)
-    }
-
     val mainAdapter by lazy {
         ListaFilmesAdapter()
     }
-
     private var _binding: FragmentHomeBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -60,17 +48,9 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: RecyclerView = binding.recyclerView
-//        homeViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,12 +78,12 @@ class HomeFragment : Fragment() {
 
     private fun populaLista() {
         lifecycleScope.launch {
-            val response = viewModel.populaLista()
-            listaFilmes.addAll(response)
-            mainAdapter.populaAdapter(listaFilmes)
-
-            configuraAdapterListener()
-            configuraClickListener()
+//            val response = viewModel.populaLista()
+//            listaFilmes.addAll(response)
+//            mainAdapter.populaAdapter(listaFilmes)
+//
+//            configuraAdapterListener()
+//            configuraClickListener()
         }
     }
 
@@ -173,34 +153,34 @@ class HomeFragment : Fragment() {
     }
 
     private fun configuraAppBar() {
-        voltar = binding.appbar.ImageVFlecha
-        iconeFavoritar = binding.appbar.ImageVIconeFavoritar
-        favoritos = binding.appbar.TextVFavoritos
-
-        voltar.isVisible = false
-
-        favoritos.setOnClickListener {
-//            val intent = Intent(this, FilmesFavoritosActivity::class.java)
-//            startActivity(intent)
-//            finish()
-        }
+//        voltar = binding.appbar.ImageVFlecha
+//        iconeFavoritar = binding.appbar.ImageVIconeFavoritar
+//        favoritos = binding.appbar.TextVFavoritos
+//
+//        voltar.isVisible = false
+//
+//        favoritos.setOnClickListener {
+////            val intent = Intent(this, FilmesFavoritosActivity::class.java)
+////            startActivity(intent)
+////            finish()
+//        }
     }
 
     private fun logicaFilmesSelecionados() {
 
         if (numeroItensSelecionados > 0) {
-            iconeFavoritar.isVisible = true
-            favoritos.isVisible = false
-
-            iconeFavoritar.setOnClickListener {
-                for (filme in listaSelecionados) {
-                    filme.selected = false
-                    viewModel.salva(filme)
-                }
-                it.isVisible = false
-                favoritos.isVisible = true
-                mainAdapter.notifyDataSetChanged()
-            }
+//            iconeFavoritar.isVisible = true
+//            favoritos.isVisible = false
+//
+//            iconeFavoritar.setOnClickListener {
+//                for (filme in listaSelecionados) {
+//                    filme.selected = false
+//                    viewModel.salva(filme)
+//                }
+//                it.isVisible = false
+//                favoritos.isVisible = true
+//                mainAdapter.notifyDataSetChanged()
+//            }
         } else {
             iconeFavoritar.isVisible = false
             favoritos.isVisible = true

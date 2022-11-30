@@ -1,7 +1,5 @@
 package com.example.desafiofilmes.adapter
 
-import android.media.Image
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +31,7 @@ class ListaFilmesAdapter() :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.item_lista, parent, false)
+            .inflate(R.layout.item_filme, parent, false)
         return ViewHolder(view, mListener)
     }
 
